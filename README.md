@@ -17,7 +17,11 @@ Sistema de gestão de laboratório (mini-LIMS) que criei do zero e que **já rod
 
 ### 🛠️ Stack
 
-`n8n` `JavaScript` `TypeScript` `Python` `FastAPI` `React` `PostgreSQL` `SQL` `Power BI` `Docker` `Linux` `GitHub Actions` `Gemini API` `Git`
+- **Automação e back-end:** `n8n` `JavaScript` `Node.js` `Python` `FastAPI` `APIs REST` `Webhooks`
+- **Front-end:** `React` `TypeScript` `Vite` `PWA`
+- **Dados:** `PostgreSQL` `SQL` `PL/pgSQL` `Modelagem de dados` `Power BI` `DAX` `Excel`
+- **IA:** `Gemini API` `Groq` `Whisper` `Engenharia de prompts`
+- **Qualidade e infra:** `Pytest` `Vitest` `GitHub Actions` `Git` `Docker` `Linux` `SSH` `Bash` `PowerShell` `Tailscale`
 
 ### 💼 Disponível para
 
