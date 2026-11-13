@@ -9,7 +9,7 @@
 | Fase | Nome | Objetivo | Status |
 |---|---|---|---|
 | **F0** | Auditoria e direitos | Investigar propriedade intelectual, licenças, riscos, escopo e viabilidade | 🔄 Em andamento |
-| **F1** | Multiplayer | Protótipo funcional de partidas online e validação da sincronização | ⏳ Não iniciada |
+| **F1** | Multiplayer | Protótipo funcional de partidas online e validação da sincronização | 🔄 Iniciada (UE5, `unreal/RTSProto`) |
 | **F2** | Comunidade | Contas, perfis, lobby, presença e recursos sociais essenciais | ⏳ Não iniciada |
 | **F3** | Competitivo | Resultados confiáveis, rankings, ranqueadas e integridade competitiva | ⏳ Não iniciada |
 | **F4** | Temporadas | Missões diárias/semanais, passe gratuito e ciclos de 60 dias | ⏳ Não iniciada |
@@ -48,6 +48,14 @@ Entregas propostas:
 ## F1 — Multiplayer
 
 **Objetivo:** provar que uma partida online é jogável, sincronizada e justa.
+
+Protótipo UE5 (DEC-010), primeiros passos:
+
+- [x] Código: câmera, seleção, movimento, 2 times, rede com servidor autoritativo (`unreal/RTSProto`).
+- [ ] Compilar e testar no Windows (lista de verificação em `unreal/README.md`).
+- [ ] Recursos e coleta.
+- [ ] Construção de base e produção de unidades.
+- [ ] Combate e condição de vitória.
 
 Entregas propostas:
 

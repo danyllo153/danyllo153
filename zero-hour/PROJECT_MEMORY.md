@@ -98,7 +98,8 @@ Estas decisões foram expressamente definidas no planejamento e devem ser consid
 | Monetização | Somente com autorização dos titulares dos direitos necessários |
 | Temporadas | Ciclos de 60 dias |
 | Missões | Planejadas, incluindo missões diárias; também foram consideradas missões semanais |
-| Evolução de engine | Unreal Engine 5 é uma possibilidade para a etapa de nova geração, **não** uma migração já aprovada |
+| Evolução de engine | ~~UE5 apenas como possibilidade~~ → substituída pela linha abaixo (DEC-010) |
+| Versão Unreal Engine 5 | Aprovada: desenvolvida em UE5, jogada no **Windows**, escrita do zero, com conteúdo e nome originais (DEC-010) |
 
 > ⚠️ **Importante:** “passe gratuito inicialmente” **não** significa autorização para cobrar posteriormente. Qualquer monetização continua condicionada à autorização expressa e à análise dos direitos aplicáveis.
 
@@ -366,7 +367,9 @@ Não sobrescrever silenciosamente decisões antigas. Quando uma decisão mudar, 
 
 ## 11. Estado atual resumido
 
-**Fase atual:** planejamento e definição de arquitetura/roadmap (pré-F0 / F0).
+**Fase atual:** F0 (direitos) em paralelo com o início da F1 (protótipo multiplayer em UE5, `unreal/RTSProto`).
+
+**Atualização 2026-11-13:** aprovada a versão em Unreal Engine 5 para Windows (DEC-010). Pesquisa registrada: a EA liberou o código de Generals/Zero Hour em GPL v3 em 27/02/2025, mas só o código; assets, nome e marca continuam protegidos, e código GPL não pode ser usado com o UE5. Por isso a versão UE5 é escrita do zero, com conteúdo original.
 
 As decisões centrais de plataforma, prioridade multiplayer, visão de nova geração, passe gratuito inicial, temporadas de 60 dias e restrição de monetização condicionada à autorização já foram definidas.
 

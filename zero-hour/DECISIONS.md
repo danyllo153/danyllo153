@@ -18,7 +18,8 @@
 | DEC-006 | Monetização condicionada | ✅ Aprovada |
 | DEC-007 | Duração das temporadas | ✅ Aprovada |
 | DEC-008 | Missões | ✅ Aprovada (parcial) |
-| DEC-009 | Unreal Engine 5 como candidata | ✅ Aprovada |
+| DEC-009 | Unreal Engine 5 como candidata | Substituída por DEC-010 |
+| DEC-010 | Versão em Unreal Engine 5 para Windows | ✅ Aprovada |
 
 > As decisões DEC-001 a DEC-009 foram tomadas na fase de planejamento, antes da criação deste registro, e foram registradas aqui em 2026-11-13. As alternativas consideradas na época não foram documentadas.
 
@@ -98,12 +99,26 @@
 
 ### DEC-009 — Unreal Engine 5 como candidata
 - **Data do registro:** 2026-11-13
-- **Status:** ✅ Aprovada
+- **Status:** Substituída por DEC-010
 - **Decisão:** Unreal Engine 5 é uma **possibilidade** para a etapa Nova Geração; a migração **não** está aprovada.
 - **Motivo:** manter a opção aberta sem assumir compromisso prematuro.
 - **Alternativas consideradas:** não registradas.
 - **Consequências e riscos:** uma migração pode exigir reconstruir renderização, unidades, física, HUD, rede, áudio, ferramentas e conteúdo.
 - **Itens em aberto:** adoção real da UE5 na F6.
+
+### DEC-010 — Versão em Unreal Engine 5 para Windows
+- **Data:** 2026-11-13
+- **Status:** ✅ Aprovada
+- **Contexto:** a pesquisa mostrou que não existe versão pública do jogo em UE5, que o código liberado pela EA (GPL v3) não pode ser combinado com o UE5 e que os assets, o nome e a marca continuam protegidos.
+- **Decisão:** desenvolver a versão em **Unreal Engine 5**, jogada no **Windows**. O protótipo começa já na F1 (`unreal/RTSProto`).
+- **Motivo:** decisão do responsável pelo projeto, que quer a versão em UE5 rodando e liberada ao público.
+- **Alternativas consideradas:** usar o código GPL da EA (incompatível com o UE5); manter a UE5 só para a F6.
+- **Consequências e riscos:**
+  - A versão UE5 é escrita do zero, sem código GPL da EA.
+  - Para ser publicada, precisa ter nome, facções, unidades, arte, sons e mapas originais (princípio 8 e [IP_AND_LICENSES.md](IP_AND_LICENSES.md)).
+  - O UE5 não exporta para navegador; a versão UE5 não roda no navegador.
+  - Sujeita aos termos de licença da Epic, a verificar antes do lançamento.
+- **Itens em aberto:** nome definitivo e cenário original; se haverá experiência jogável no navegador (DEC-001) e como; modelo de rede definitivo da versão UE5.
 
 ---
 

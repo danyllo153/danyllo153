@@ -8,8 +8,8 @@ Projeto independente de modernização de uma experiência de **estratégia em t
 
 | Item | Situação |
 |---|---|
-| **Fase** | Planejamento e definição de arquitetura/roadmap (pré-F0 / F0) |
-| **Código** | Nenhum código implementado ainda |
+| **Fase** | F0 (direitos) em paralelo com o início da F1 |
+| **Código** | Protótipo UE5 para Windows em [`unreal/`](unreal/README.md), ainda não compilado |
 | **Arquitetura** | Proposta inicial, ainda a ser validada com protótipos |
 | **Direitos** | Em investigação (fase F0) |
 

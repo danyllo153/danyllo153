@@ -1,0 +1,13 @@
+{
+	"FileVersion": 3,
+	"EngineAssociation": "5.5",
+	"Category": "",
+	"Description": "Prototipo F1 de RTS multiplayer (nome provisorio). Conteudo original.",
+	"Modules": [
+		{
+			"Name": "RTSProto",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	]
+}

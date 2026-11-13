@@ -51,6 +51,12 @@ Por exemplo: B para partidas casuais e ranqueadas, com re-simulação no servido
 ### Recomendação provisória
 Prototipar **B** na F1. Critério de saída: se o determinismo entre Windows e WebAssembly não for comprovado, ou se o map hack se mostrar um risco inaceitável, reavaliar C ou D.
 
+### Versão UE5 (DEC-010)
+🧪 O protótipo em `unreal/RTSProto` usa a **replicação nativa do Unreal com servidor autoritativo** (modelo C): o servidor move as unidades e valida cada ordem, e os clientes só enviam ordens. É o caminho mais rápido no UE5. Pontos a medir antes de aprovar:
+- Banda com centenas de unidades (replicação de movimento por unidade custa mais que lockstep).
+- Uso de Replication Graph ou Iris para escalar.
+- Relevância por visão do time, para a névoa de guerra não vazar informação.
+
 ## 3. Determinismo: o que precisa ser verdade
 
 - [ ] Simulação com **matemática de ponto fixo** (ou ponto flutuante rigorosamente controlado e testado).
