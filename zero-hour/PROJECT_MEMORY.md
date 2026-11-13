@@ -367,7 +367,9 @@ Não sobrescrever silenciosamente decisões antigas. Quando uma decisão mudar, 
 
 ## 11. Estado atual resumido
 
-**Fase atual:** F0 (direitos) em paralelo com o início da F1 (protótipo multiplayer em UE5, `unreal/RTSProto`).
+**Fase atual:** F0 / início da F1 na trilha **Classic** (DEC-011): navegador + Windows com crossplay, multiplayer, ranqueada, melhoria gráfica e resoluções 1080p/2K/4K (DEC-012). O protótipo UE5 (`unreal/RTSProto`) está pausado até a F6.
+
+**Atualização 2026-11-13 (Classic):** existem vários ports do motor original para WebAssembly, todos GPL v3 e todos exigindo os arquivos do próprio jogador. A base técnica proposta é um fork de um deles; ver DEC-011 e a trilha Classic no [ROADMAP.md](ROADMAP.md).
 
 **Atualização 2026-11-13:** aprovada a versão em Unreal Engine 5 para Windows (DEC-010). Pesquisa registrada: a EA liberou o código de Generals/Zero Hour em GPL v3 em 27/02/2025, mas só o código; assets, nome e marca continuam protegidos, e código GPL não pode ser usado com o UE5. Por isso a versão UE5 é escrita do zero, com conteúdo original.
 

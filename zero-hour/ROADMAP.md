@@ -2,7 +2,23 @@
 
 > A ordem das fases é uma referência de planejamento. Escopo, duração e critérios de conclusão de cada fase devem ser detalhados e aprovados **antes** de a fase começar. Nenhuma fase tem prazo definido ainda.
 
-**Fase atual:** pré-F0 / F0, planejamento e auditoria.
+**Fase atual:** F0 / início da F1, versão **Classic** primeiro (DEC-011). O protótipo UE5 fica pausado até a F6.
+
+## Trilha Classic (DEC-011 e DEC-012)
+
+Ordem proposta para entregar a Classic no navegador e no Windows com crossplay:
+
+| Etapa | Fase | Entrega | Como saber que terminou |
+|---|---|---|---|
+| **C1** Base técnica | F0/F1 | Escolher e fazer fork de um port GPL; compilar para Web e para Windows a partir do **mesmo código** | Partida skirmish contra a IA nos dois, com os arquivos do próprio jogador |
+| **C2** Arquivos do jogador | F1 | Tela para o jogador escolher a pasta do jogo instalado; cópia local no navegador (OPFS) | Nada é enviado nem hospedado por nós |
+| **C3** Resoluções | F1/F5 | 1080p, 1440p e 4K, com escala da interface | Interface legível e jogo estável nas três, nos dois clientes |
+| **C4** Multiplayer web ↔ web | F1 | Relay (WebSocket ou WebRTC) + lobby simples | 1v1 completo sem dessincronização |
+| **C5** Crossplay Windows ↔ web | F1 | Cliente Windows usando o mesmo relay | Mesmo CRC nos dois lados durante partidas longas |
+| **C6** Contas e lobby | F2 | Login, perfis, salas, presença | — |
+| **C7** Ranqueada | F3 | Resultados validados pelo relay, rating, matchmaking | Resultado não pode ser forjado pelo cliente |
+| **C8** Melhoria gráfica | F5 | Anti-aliasing, sombras, filtragem, widescreen, desempenho | Comparação antes/depois nas três resoluções |
+| **C9** Temporadas | F4 | Missões, passe gratuito, ciclos de 60 dias | — |
 
 ## Visão geral
 
@@ -49,7 +65,7 @@ Entregas propostas:
 
 **Objetivo:** provar que uma partida online é jogável, sincronizada e justa.
 
-Protótipo UE5 (DEC-010), primeiros passos:
+Protótipo UE5 (DEC-010), ⏸️ pausado até a F6 por causa da DEC-011:
 
 - [x] Código: câmera, seleção, movimento, 2 times, rede com servidor autoritativo (`unreal/RTSProto`).
 - [ ] Compilar e testar no Windows (lista de verificação em `unreal/README.md`).

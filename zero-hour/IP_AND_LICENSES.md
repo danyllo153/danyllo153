@@ -29,8 +29,8 @@
 |---|---|---|---|---|
 | 1 | Quem detém os direitos sobre nome e marca? | — | 🔶 Pendente | — |
 | 2 | Quem detém o copyright do jogo e de seus assets? | — | 🔶 Pendente | — |
-| 3 | Existe código-fonte relacionado publicado? Sob qual licença? | — | 🔶 Pendente | — |
-| 4 | Essa licença cobre assets (arte, áudio, mapas) ou só código? | — | 🔶 Pendente | — |
+| 3 | Existe código-fonte relacionado publicado? Sob qual licença? | [Repositório da EA](https://github.com/electronicarts/CnC_Generals_Zero_Hour), `LICENSE.md` | Sim. Código de Generals e Zero Hour liberado em 27/02/2025 sob **GPL v3 com termos adicionais (seção 7)**: não concede marcas da EA, proíbe afirmar afiliação, exige que versões modificadas sejam marcadas como tal e não identificadas como o original, e exige manter o aviso de copyright e os termos | 2026-11-13 |
+| 4 | Essa licença cobre assets (arte, áudio, mapas) ou só código? | Mesmo repositório | Só código. Os arquivos do jogo não estão incluídos; os ports existentes exigem a cópia do próprio jogador. **Não hospedar arquivos do jogo** | 2026-11-13 |
 | 5 | Existem políticas oficiais para projetos de fãs ou conteúdo derivado? | — | 🔶 Pendente | — |
 | 6 | O que essas políticas permitem e proíbem (nome, distribuição, monetização)? | — | 🔶 Pendente | — |
 | 7 | É necessário trocar o nome para publicação? | — | 🔶 Pendente | — |

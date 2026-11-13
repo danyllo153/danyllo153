@@ -19,7 +19,9 @@
 | DEC-007 | Duração das temporadas | ✅ Aprovada |
 | DEC-008 | Missões | ✅ Aprovada (parcial) |
 | DEC-009 | Unreal Engine 5 como candidata | Substituída por DEC-010 |
-| DEC-010 | Versão em Unreal Engine 5 para Windows | ✅ Aprovada |
+| DEC-010 | Versão em Unreal Engine 5 para Windows | ✅ Aprovada (adiada para depois da Classic, ver DEC-011) |
+| DEC-011 | Classic primeiro: navegador + Windows com crossplay, multiplayer e ranqueada | ✅ Aprovada |
+| DEC-012 | Resoluções 1080p, 1440p (2K) e 2160p (4K) | ✅ Aprovada |
 
 > As decisões DEC-001 a DEC-009 foram tomadas na fase de planejamento, antes da criação deste registro, e foram registradas aqui em 2026-11-13. As alternativas consideradas na época não foram documentadas.
 
@@ -119,6 +121,36 @@
   - O UE5 não exporta para navegador; a versão UE5 não roda no navegador.
   - Sujeita aos termos de licença da Epic, a verificar antes do lançamento.
 - **Itens em aberto:** nome definitivo e cenário original; se haverá experiência jogável no navegador (DEC-001) e como; modelo de rede definitivo da versão UE5.
+
+### DEC-011 — Classic primeiro: navegador + Windows com crossplay
+- **Data:** 2026-11-13
+- **Status:** ✅ Aprovada
+- **Contexto:** o responsável pelo projeto decidiu seguir o roadmap e entregar a versão Classic antes da versão UE5. A pesquisa encontrou vários ports do motor original para WebAssembly, todos derivados do código GPL v3 liberado pela EA e todos exigindo que o jogador forneça os próprios arquivos do jogo.
+- **Decisão:**
+  - A versão **Classic** vem antes da versão UE5. O protótipo UE5 (`unreal/RTSProto`) fica pausado até a F6.
+  - A Classic deve ser jogável no **navegador** e no **Windows**, com **crossplay** entre eles.
+  - Foco em **multiplayer**, **ranqueada** e **melhoria gráfica**.
+- **Motivo:** decisão do responsável pelo projeto, alinhada ao roadmap original (F1 a F5 antes da F6).
+- **Alternativas consideradas:** continuar a versão UE5 primeiro.
+- **Consequências e riscos:**
+  - Crossplay exige que navegador e Windows rodem **o mesmo código de simulação**, com o mesmo resultado (lockstep com verificação de CRC). Diferenças entre WebAssembly e x86 são o maior risco técnico.
+  - O navegador não usa UDP direto: o multiplayer precisa de relay (WebSocket ou WebRTC) também para os clientes Windows.
+  - A melhoria gráfica fica, a princípio, no renderizador (resolução, anti-aliasing, sombras, filtragem). Assets em HD só se forem originais ou licenciados.
+- **Itens em aberto:** base técnica (proposta abaixo, aguardando confirmação); nome público do projeto; sistema de classificação.
+
+**Base técnica proposta (🧪 aguardando confirmação):** fork de um port existente do código GPL da EA para WebAssembly, com estas condições, que vêm dos termos de licença:
+- Código do motor continua **GPL v3 com os termos adicionais da EA** e precisa ser publicado.
+- O jogador fornece os **arquivos do próprio jogo** (por exemplo, da cópia da Steam). Nós **não hospedamos** arquivos do jogo.
+- Nenhuma marca da EA (“Command & Conquer” e outras) no nome do projeto; versão marcada como modificada e não apresentada como o original; nenhuma afirmação de afiliação.
+- Serviços online (contas, lobby, ranking) são programas separados e podem ter licença própria.
+
+### DEC-012 — Resoluções suportadas
+- **Data:** 2026-11-13
+- **Status:** ✅ Aprovada
+- **Decisão:** suportar **1920×1080 (1080p)**, **2560×1440 (2K)** e **3840×2160 (4K)**, no navegador e no Windows.
+- **Motivo:** requisito do responsável pelo projeto para a melhoria gráfica.
+- **Consequências e riscos:** a interface original foi feita para resoluções baixas; em 4K precisa de escala da interface para continuar legível. No navegador, 4K depende do desempenho da GPU e do WebGL/WebGPU.
+- **Itens em aberto:** suporte a ultrawide (21:9) e a outras proporções.
 
 ---
 
