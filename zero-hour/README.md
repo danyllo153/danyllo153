@@ -17,6 +17,7 @@ Projeto independente de modernização de uma experiência de **estratégia em t
 
 | Documento | Conteúdo |
 |---|---|
+| [HANDOFF.md](HANDOFF.md) | **Comece aqui:** estado atual, decisões e próximos passos |
 | [PROJECT_MEMORY.md](PROJECT_MEMORY.md) | Documento mestre: prompt-base, princípios, decisões e memória do projeto |
 | [ARCHITECTURE.md](ARCHITECTURE.md) | Arquitetura de referência em camadas e alternativas |
 | [ROADMAP.md](ROADMAP.md) | Fases F0–F6, entregas e critérios de avanço |
