@@ -1,0 +1,122 @@
+# Registro de decisões — Zero Hour
+
+> **Regras deste registro**
+>
+> - Só entram aqui decisões **aprovadas explicitamente**. Propostas e hipóteses ficam em [ARCHITECTURE.md](ARCHITECTURE.md) e [NETWORKING.md](NETWORKING.md); questões em aberto ficam no [PROJECT_MEMORY.md](PROJECT_MEMORY.md).
+> - Nunca apagar nem sobrescrever uma decisão. Quando ela mudar, criar uma nova entrada e marcar a antiga como **Substituída por DEC-YYY**.
+> - Ao registrar uma decisão, atualizar também o [PROJECT_MEMORY.md](PROJECT_MEMORY.md) e o [ROADMAP.md](ROADMAP.md), se forem afetados.
+
+## Índice
+
+| ID | Tema | Status |
+|---|---|---|
+| DEC-001 | Plataformas-alvo | ✅ Aprovada |
+| DEC-002 | Prioridade do projeto | ✅ Aprovada |
+| DEC-003 | Identidade de jogo | ✅ Aprovada |
+| DEC-004 | Visão de longo prazo | ✅ Aprovada |
+| DEC-005 | Passe de progressão gratuito | ✅ Aprovada |
+| DEC-006 | Monetização condicionada | ✅ Aprovada |
+| DEC-007 | Duração das temporadas | ✅ Aprovada |
+| DEC-008 | Missões | ✅ Aprovada (parcial) |
+| DEC-009 | Unreal Engine 5 como candidata | ✅ Aprovada |
+
+> As decisões DEC-001 a DEC-009 foram tomadas na fase de planejamento, antes da criação deste registro, e foram registradas aqui em 2026-11-13. As alternativas consideradas na época não foram documentadas.
+
+---
+
+### DEC-001 — Plataformas-alvo
+- **Data do registro:** 2026-11-13
+- **Status:** ✅ Aprovada
+- **Decisão:** o projeto terá como plataformas-alvo o **navegador** e o **Windows**.
+- **Motivo:** facilitar o acesso dos jogadores e manter a plataforma tradicional do jogo clássico.
+- **Alternativas consideradas:** não registradas.
+- **Consequências e riscos:** pode exigir builds ou clientes diferentes por plataforma; o desempenho no navegador ainda precisa ser validado.
+- **Itens em aberto:** como o navegador vai executar a experiência (WebAssembly, cliente web separado ou outra solução).
+
+### DEC-002 — Prioridade do projeto
+- **Data do registro:** 2026-11-13
+- **Status:** ✅ Aprovada
+- **Decisão:** a prioridade é o **multiplayer online competitivo**.
+- **Motivo:** é a razão central do projeto.
+- **Alternativas consideradas:** não registradas.
+- **Consequências e riscos:** matchmaking, estabilidade, sincronização e integridade das partidas vêm antes de recursos visuais e de progressão.
+- **Itens em aberto:** modelo de autoridade da partida, matchmaking e sistema de classificação.
+
+### DEC-003 — Identidade de jogo
+- **Data do registro:** 2026-11-13
+- **Status:** ✅ Aprovada
+- **Decisão:** preservar a **essência e as regras clássicas** como referência de design.
+- **Motivo:** manter a identidade estratégica e competitiva que motiva o projeto.
+- **Alternativas consideradas:** não registradas.
+- **Consequências e riscos:** mudanças nas regras centrais precisam de avaliação cuidadosa. Reproduzir regras não autoriza copiar código ou assets protegidos (ver [IP_AND_LICENSES.md](IP_AND_LICENSES.md)).
+- **Itens em aberto:** quais regras, modos, facções e sistemas serão reproduzidos.
+
+### DEC-004 — Visão de longo prazo
+- **Data do registro:** 2026-11-13
+- **Status:** ✅ Aprovada
+- **Decisão:** a visão de longo prazo é uma versão **Nova Geração**.
+- **Motivo:** preparar o projeto para evolução tecnológica e visual.
+- **Alternativas consideradas:** não registradas.
+- **Consequências e riscos:** a arquitetura deve separar Classic e Next conceitualmente.
+- **Itens em aberto:** coexistência, migração ou substituição entre Classic e Next.
+
+### DEC-005 — Passe de progressão gratuito
+- **Data do registro:** 2026-11-13
+- **Status:** ✅ Aprovada
+- **Decisão:** o passe será **gratuito inicialmente**. Missões e recompensas não podem conceder vantagem competitiva.
+- **Motivo:** progressão justa e preservação da integridade competitiva.
+- **Alternativas consideradas:** não registradas.
+- **Consequências e riscos:** recompensas limitadas a itens cosméticos ou de reconhecimento. “Gratuito inicialmente” **não** autoriza cobrança futura (ver DEC-006).
+- **Itens em aberto:** níveis, XP, ritmo de progressão, recompensas e recuperação de temporadas.
+
+### DEC-006 — Monetização condicionada
+- **Data do registro:** 2026-11-13
+- **Status:** ✅ Aprovada
+- **Decisão:** nenhuma monetização, venda de itens, passe pago ou exploração comercial será implementada sem **autorização expressa dos titulares dos direitos** necessários.
+- **Motivo:** respeito à propriedade intelectual e redução de risco jurídico.
+- **Alternativas consideradas:** não registradas.
+- **Consequências e riscos:** o projeto não deve ter fluxos de pagamento até que exista autorização comprovada.
+- **Itens em aberto:** quais autorizações seriam necessárias.
+
+### DEC-007 — Duração das temporadas
+- **Data do registro:** 2026-11-13
+- **Status:** ✅ Aprovada
+- **Decisão:** temporadas em **ciclos de 60 dias**.
+- **Motivo:** definido no planejamento.
+- **Alternativas consideradas:** não registradas.
+- **Consequências e riscos:** missões, passe e possíveis resets de ranking devem se alinhar a esse ciclo.
+- **Itens em aberto:** política de reset de ranking e recompensas de fim de temporada.
+
+### DEC-008 — Missões
+- **Data do registro:** 2026-11-13
+- **Status:** ✅ Aprovada (parcial)
+- **Decisão:** haverá **missões diárias**. Missões **semanais** foram consideradas, mas não confirmadas.
+- **Motivo:** incentivar o retorno e recompensar a participação.
+- **Alternativas consideradas:** não registradas.
+- **Consequências e riscos:** missões não podem incentivar o jogador a prejudicar a própria equipe ou a integridade da partida.
+- **Itens em aberto:** confirmação das missões semanais, tipos de missão, critérios, limites e recompensas.
+
+### DEC-009 — Unreal Engine 5 como candidata
+- **Data do registro:** 2026-11-13
+- **Status:** ✅ Aprovada
+- **Decisão:** Unreal Engine 5 é uma **possibilidade** para a etapa Nova Geração; a migração **não** está aprovada.
+- **Motivo:** manter a opção aberta sem assumir compromisso prematuro.
+- **Alternativas consideradas:** não registradas.
+- **Consequências e riscos:** uma migração pode exigir reconstruir renderização, unidades, física, HUD, rede, áudio, ferramentas e conteúdo.
+- **Itens em aberto:** adoção real da UE5 na F6.
+
+---
+
+## Modelo para novas decisões
+
+```markdown
+### DEC-XXX — <Tema>
+- **Data:** AAAA-MM-DD
+- **Status:** ✅ Aprovada | Substituída por DEC-YYY
+- **Contexto:**
+- **Decisão:**
+- **Motivo:**
+- **Alternativas consideradas:**
+- **Consequências e riscos:**
+- **Itens em aberto:**
+```

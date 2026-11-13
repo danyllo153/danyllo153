@@ -326,14 +326,14 @@ Manter documentação versionada no repositório. Organização recomendada:
 
 | Arquivo | Conteúdo |
 |---|---|
-| `README.md` | Visão geral, estado atual e como começar |
-| `PROJECT_MEMORY.md` | Este documento, atualizado conforme decisões forem aprovadas |
-| `ARCHITECTURE.md` | Diagramas e decisões arquiteturais |
-| `ROADMAP.md` | Fases, entregas e critérios |
-| `DECISIONS.md` | Registro de decisões com data, contexto e justificativa |
-| `IP_AND_LICENSES.md` | Inventário de assets, dependências e licenças |
-| `NETWORKING.md` | Protocolo, sincronização, autoridade e reconexão |
-| `SECURITY.md` | Ameaças, mitigação e integridade competitiva |
+| [`README.md`](README.md) | Visão geral, estado atual e como começar |
+| [`PROJECT_MEMORY.md`](PROJECT_MEMORY.md) | Este documento, atualizado conforme decisões forem aprovadas |
+| [`ARCHITECTURE.md`](ARCHITECTURE.md) | Diagramas e decisões arquiteturais |
+| [`ROADMAP.md`](ROADMAP.md) | Fases, entregas e critérios |
+| [`DECISIONS.md`](DECISIONS.md) | Registro de decisões com data, contexto e justificativa |
+| [`IP_AND_LICENSES.md`](IP_AND_LICENSES.md) | Inventário de assets, dependências e licenças |
+| [`NETWORKING.md`](NETWORKING.md) | Protocolo, sincronização, autoridade e reconexão |
+| [`SECURITY.md`](SECURITY.md) | Ameaças, mitigação e integridade competitiva |
 
 ### Registro de decisões
 
