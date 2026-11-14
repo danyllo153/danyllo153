@@ -1,0 +1,157 @@
+diff --git a/Core/GameEngineDevice/Source/WebGPUDevice/WebGPUD3D8.cpp b/Core/GameEngineDevice/Source/WebGPUDevice/WebGPUD3D8.cpp
+index b756b53..f9a4be8 100644
+--- a/Core/GameEngineDevice/Source/WebGPUDevice/WebGPUD3D8.cpp
++++ b/Core/GameEngineDevice/Source/WebGPUDevice/WebGPUD3D8.cpp
+@@ -3692,13 +3692,17 @@ HRESULT WebGPUDirect3D8::GetAdapterIdentifier(UINT adapter, DWORD, D3DADAPTER_ID
+ 
+ HRESULT WebGPUDirect3D8::EnumAdapterModes(UINT adapter, UINT modeIndex, D3DDISPLAYMODE *displayMode)
+ {
+-	static constexpr std::array<std::pair<UINT, UINT>, 6> modes = {
++	// Zero Hour (danyllo153) 14/11/2026 Add 1440p (2K) and 2160p (4K). W3DDisplay still hides modes taller
++	// than the player's screen, so a 1080p monitor keeps the old list.
++	static constexpr std::array<std::pair<UINT, UINT>, 8> modes = {
+ 		std::pair { 800U, 600U },
+ 		std::pair { 1024U, 768U },
+ 		std::pair { 1280U, 720U },
+ 		std::pair { 1280U, 800U },
+ 		std::pair { 1600U, 900U },
+ 		std::pair { 1920U, 1080U },
++		std::pair { 2560U, 1440U },
++		std::pair { 3840U, 2160U },
+ 	};
+ 	if (adapter || modeIndex >= modes.size() || !displayMode) {
+ 		return D3DERR_INVALIDCALL;
+diff --git a/GeneralsMD/Code/GameEngineDevice/Source/SDL3GameEngine.cpp b/GeneralsMD/Code/GameEngineDevice/Source/SDL3GameEngine.cpp
+index b08126c..00618c9 100644
+--- a/GeneralsMD/Code/GameEngineDevice/Source/SDL3GameEngine.cpp
++++ b/GeneralsMD/Code/GameEngineDevice/Source/SDL3GameEngine.cpp
+@@ -499,17 +499,46 @@ void SDL3GameEngine::update(void)
+ /**
+  * From GameEngine: execute() - main game loop
+  */
++#if defined(__EMSCRIPTEN__)
++static void* s_gxPumpEngine = nullptr;
++static Bool s_gxInFrame = FALSE;
++#endif
++
+ void SDL3GameEngine::execute(void)
+ {
+ 	fprintf(stderr, "INFO: SDL3GameEngine::execute() - entering main loop\n");
+ #if defined(__EMSCRIPTEN__)
+ 	// GeneralsX @port Codex 04/08/2026 Let Chrome own frame scheduling and keep the engine alive.
+ 	TheFramePacer->reset();
++#if defined(GENERALSX_WEB_JSPI)
++	// Zero Hour (danyllo153) 14/11/2026 With JSPI a frame may only suspend (emscripten_sleep) inside a
++	// WebAssembly.promising export, and emscripten's main loop calls frames through the function table,
++	// which is not promising. Drive frames from JS through the GeneralsXPump export instead (listed in
++	// JSPI_EXPORTS) and await each one before scheduling the next, so frames never overlap. Same 16 ms
++	// setTimeout pacing as the Asyncify build, for the same LAN reason given below.
++	s_gxPumpEngine = this;
++	EM_ASM({
++		const pump = Module["_GeneralsXPump"];
++		const loop = async () => {
++			const start = performance.now();
++			try {
++				await pump();
++			} catch (error) {
++				if (error !== "unwind") console.error("GeneralsXPump", error);
++			}
++			if (Module["__gxStopLoop"]) return;
++			setTimeout(loop, Math.max(0, 16 - (performance.now() - start)));
++		};
++		setTimeout(loop, 0);
++	});
++	emscripten_exit_with_live_runtime();
++#else
+ 	emscripten_set_main_loop_arg(browserFrame, this, 0, true);
+ 	// GeneralsX @bugfix Codex 06/08/2026 requestAnimationFrame stops in a window that is unfocused or
+ 	// occluded (macOS marks background windows occluded), which freezes one LAN client while its peer
+ 	// keeps simulating — the match then starts desynced. setTimeout keeps stepping regardless of focus.
+ 	emscripten_set_main_loop_timing(EM_TIMING_SETTIMEOUT, 16);
++#endif
+ #else
+ 	GameEngine::execute();
+ 	fprintf(stderr, "INFO: SDL3GameEngine::execute() - exited main loop\n");
+@@ -521,8 +550,6 @@ void SDL3GameEngine::execute(void)
+ // loop and desyncs LAN peers. The page drives frames from a worker while hidden via this export.
+ // The guard makes overlapping entry impossible: executeFrame can suspend in emscripten_sleep,
+ // and a pump arriving during that suspension must be dropped, not run reentrantly.
+-static void* s_gxPumpEngine = nullptr;
+-static Bool s_gxInFrame = FALSE;
+ 
+ extern "C" EMSCRIPTEN_KEEPALIVE void GeneralsXPump(void)
+ {
+@@ -540,7 +567,11 @@ void SDL3GameEngine::browserFrame(void* enginePointer)
+ 	if (engine->getQuitting())
+ 	{
+ 		s_gxInFrame = FALSE;
++#if defined(GENERALSX_WEB_JSPI)
++		EM_ASM({ Module["__gxStopLoop"] = 1; });
++#else
+ 		emscripten_cancel_main_loop();
++#endif
+ 		return;
+ 	}
+ 
+diff --git a/GeneralsMD/Code/Main/CMakeLists.txt b/GeneralsMD/Code/Main/CMakeLists.txt
+index 7817c83..39c3fe8 100644
+--- a/GeneralsMD/Code/Main/CMakeLists.txt
++++ b/GeneralsMD/Code/Main/CMakeLists.txt
+@@ -45,7 +45,7 @@ if(SAGE_USE_WEBGPU)
+     target_link_libraries(z_generals PRIVATE webgpu_context)
+     target_link_options(z_generals PRIVATE
+         "LINKER:--error-limit=0"
+-        "-sSUPPORT_LONGJMP=emscripten"
++        "$<IF:$<BOOL:${GENERALSX_WEB_JSPI}>,-sSUPPORT_LONGJMP=wasm,-sSUPPORT_LONGJMP=emscripten>"
+         # GeneralsX @feature Codex 06/08/2026 Emit a module only: the page around the game is a TypeScript +
+         # Tailwind app in web/, so emscripten must not generate (or own) any HTML.
+         "-sMODULARIZE=1"
+diff --git a/cmake/webgpu.cmake b/cmake/webgpu.cmake
+index 49cc9c6..7136a3a 100644
+--- a/cmake/webgpu.cmake
++++ b/cmake/webgpu.cmake
+@@ -4,19 +4,28 @@ if(NOT EMSCRIPTEN)
+ endif()
+ 
+ # GeneralsX @build Codex 04/08/2026 Keep the browser runtime single-threaded until game work is explicitly moved to workers.
+-add_compile_options(-fexceptions)
++# Zero Hour (danyllo153) 14/11/2026 GENERALSX_WEB_JSPI=ON trades Asyncify + JS-emulated exceptions for
++# JSPI + native WebAssembly exceptions: no Asyncify instrumentation and no invoke_* JS trampolines around
++# every call that can unwind, which is where most of the browser build's CPU time goes in large matches.
++# Needs a browser with JSPI (Chrome/Edge 137+). OFF keeps the original Asyncify build.
++option(GENERALSX_WEB_JSPI "Use JSPI and native wasm exceptions instead of Asyncify" OFF)
++if(GENERALSX_WEB_JSPI)
++    set(GENERALSX_WEB_EH_FLAG -fwasm-exceptions)
++    add_compile_definitions(GENERALSX_WEB_JSPI)
++else()
++    set(GENERALSX_WEB_EH_FLAG -fexceptions)
++endif()
++add_compile_options(${GENERALSX_WEB_EH_FLAG})
+ 
+ add_library(webgpu_runtime INTERFACE)
+ target_compile_definitions(webgpu_runtime INTERFACE SAGE_USE_WEBGPU)
+ target_compile_options(webgpu_runtime INTERFACE
+     --use-port=emdawnwebgpu
+-    -fexceptions
++    ${GENERALSX_WEB_EH_FLAG}
+ )
+ target_link_options(webgpu_runtime INTERFACE
+     --use-port=emdawnwebgpu
+-    -fexceptions
+-	# GeneralsX @feature Codex 04/08/2026 Suspend synchronous legacy initialization while WebGPU requests resolve.
+-	"-sASYNCIFY=1"
++    ${GENERALSX_WEB_EH_FLAG}
+     # GeneralsX @port Codex 04/08/2026 Match the native process stack required by legacy global-data initialization.
+     "-sSTACK_SIZE=1048576"
+     # GeneralsX @build Codex 05/08/2026 Fixed 2 GiB heap. Do NOT raise: growth detaches emdawnwebgpu heap views
+@@ -26,3 +35,10 @@ target_link_options(webgpu_runtime INTERFACE
+     # GeneralsX @feature Codex 05/08/2026 IDBFS keeps the user data dir (Options.ini, saves) across page loads.
+     "-lidbfs.js"
+ )
++
++# GeneralsX @feature Codex 04/08/2026 Suspend synchronous legacy initialization while WebGPU requests resolve.
++if(GENERALSX_WEB_JSPI)
++    target_link_options(webgpu_runtime INTERFACE "-sJSPI=1" "-sJSPI_EXPORTS=GeneralsXPump")
++else()
++    target_link_options(webgpu_runtime INTERFACE "-sASYNCIFY=1")
++endif()
