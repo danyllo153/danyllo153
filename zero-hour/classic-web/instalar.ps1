@@ -40,6 +40,25 @@ foreach ($f in $Files) {
 $index = Join-Path $Www "index.html"
 $html = [IO.File]::ReadAllText($index)
 $html = [regex]::Replace($html, "(?s)\s*<!-- Google Analytics.*?gtag\('config'[^<]*</script>", "")
+# Esconde os botoes do topo (doacao, wasm.ltd e GitHub) e deixa no lugar uma linha discreta de
+# credito. A GPL exige oferecer o codigo-fonte a quem recebe o motor, e a licenca da pagina
+# (MIT-PoU) exige o credito: por isso o rodape fica.
+$SourceUrl = "https://github.com/origami-ltd/wasm-generals/tree/$Commit"
+$custom = @"
+<style id="zh-custom">
+  a.ogx-hud-button[href*="buymeacoffee"],
+  a.ogx-hud-button[href*="wasm.ltd"],
+  a.ogx-hud-button[aria-label="Source on GitHub"] { display: none !important; }
+  #zh-credit { position: fixed; right: 8px; bottom: 4px; z-index: 5; font: 10px/1.4 system-ui, sans-serif;
+               color: rgba(255,255,255,.35); pointer-events: auto; }
+  #zh-credit a { color: inherit; }
+</style>
+"@
+$credit = "<div id=""zh-credit"">Motor GPL-3.0: <a href=""$SourceUrl"" target=""_blank"" rel=""noopener"">c&oacute;digo-fonte</a> &middot; Includes material from origami-ltd/wasm-generals &mdash; https://generals.wasm.ltd</div>"
+if ($html -notmatch 'id="zh-custom"') {
+    # A pagina nao tem </head>: estilo e credito entram logo depois da tag <body>.
+    $html = ([regex]'(<body[^>]*>)').Replace($html, "`$1`n$custom`n$credit", 1)
+}
 [IO.File]::WriteAllText($index, $html)
 
 Write-Host ""

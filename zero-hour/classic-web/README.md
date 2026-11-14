@@ -37,7 +37,7 @@ Baixe esta pasta `classic-web` e, dentro dela, no PowerShell:
 powershell -ExecutionPolicy Bypass -File .\instalar.ps1
 ```
 
-Baixa ~20 MB para `%USERPROFILE%\ZeroHourWeb`, de um commit fixo do projeto [origami-ltd/wasm-generals](https://github.com/origami-ltd/wasm-generals), conferindo o SHA-256 de cada arquivo. Também remove o Google Analytics da página.
+Baixa ~20 MB para `%USERPROFILE%\ZeroHourWeb`, de um commit fixo do projeto [origami-ltd/wasm-generals](https://github.com/origami-ltd/wasm-generals), conferindo o SHA-256 de cada arquivo. Também remove o Google Analytics e os botões do topo (doação, wasm.ltd, GitHub), deixando só uma linha de crédito no rodapé, que as licenças exigem.
 
 ## 3. Ligar o servidor (toda vez que forem jogar)
 
