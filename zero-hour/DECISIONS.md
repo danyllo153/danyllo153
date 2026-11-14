@@ -22,6 +22,7 @@
 | DEC-010 | Versão em Unreal Engine 5 para Windows | ✅ Aprovada (adiada para depois da Classic, ver DEC-011) |
 | DEC-011 | Classic primeiro: navegador + Windows com crossplay, multiplayer e ranqueada | ✅ Aprovada |
 | DEC-012 | Resoluções 1080p, 1440p (2K) e 2160p (4K) | ✅ Aprovada |
+| DEC-013 | Primeiro jogável: wasm-generals hospedado no PC do jogador, via Tailscale | ✅ Aprovada |
 
 > As decisões DEC-001 a DEC-009 foram tomadas na fase de planejamento, antes da criação deste registro, e foram registradas aqui em 2026-11-13. As alternativas consideradas na época não foram documentadas.
 
@@ -151,6 +152,19 @@
 - **Motivo:** requisito do responsável pelo projeto para a melhoria gráfica.
 - **Consequências e riscos:** a interface original foi feita para resoluções baixas; em 4K precisa de escala da interface para continuar legível. No navegador, 4K depende do desempenho da GPU e do WebGL/WebGPU.
 - **Itens em aberto:** suporte a ultrawide (21:9) e a outras proporções.
+
+### DEC-013 — Primeiro jogável: wasm-generals no PC do jogador, via Tailscale
+- **Data:** 2026-11-14
+- **Status:** ✅ Aprovada
+- **Contexto:** o responsável quer jogar já com um amigo pelo navegador. O projeto [origami-ltd/wasm-generals](https://github.com/origami-ltd/wasm-generals) (base GeneralsX) já roda o Zero Hour completo em WebAssembly + WebGPU, com LAN por relay WebSocket. Os binários publicados por ele incluem, no `GeneralsXZH.data`, cursores e scripts de IA do jogo original. A página depende de pacotes privados (`@wasm/runtime`, `@wasm/shell`), então só a versão já compilada (`web/dist`) é utilizável.
+- **Decisão:** usar a build pronta do wasm-generals (commit `46382a3`), servida **no PC do responsável** pelo `serve-webgpu.py` (página + relay) e publicada **só na tailnet** com `tailscale serve` (HTTPS na porta 8765). Scripts em [`classic-web/`](classic-web/README.md).
+- **Motivo:** jogável hoje, custo zero, sem hospedar arquivos do jogo em lugar público.
+- **Alternativas consideradas:** site público na Cloudflare Pages (adiado: o `.data` traz arquivos do jogo); compilar o motor do zero (adiado: toolchain pesada e página com dependências privadas); jogo nativo com ZeroTier/Radmin.
+- **Consequências e riscos:**
+  - Os binários do wasm-generals **não** entram neste repositório; o script baixa e confere o SHA-256.
+  - Não é a base definitiva da trilha Classic (crossplay com Windows, ranqueada): essa escolha continua aberta no HANDOFF.
+  - Página sob licença MIT-PoU: manter o crédito ao wasm-generals.
+- **Itens em aberto:** testar uma partida real entre dois PCs; build própria sem arquivos do jogo no `.data` para um site público.
 
 ---
 

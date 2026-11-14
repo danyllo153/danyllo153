@@ -1,4 +1,4 @@
-# HANDOFF — Zero Hour (estado em 2026-11-13)
+# HANDOFF — Zero Hour (estado em 2026-11-14)
 
 > Leia este arquivo primeiro ao retomar o projeto numa conversa nova.
 > Depois leia o [PROJECT_MEMORY.md](PROJECT_MEMORY.md) (regras e princípios) e o [DECISIONS.md](DECISIONS.md) (decisões completas).
@@ -15,6 +15,7 @@
 | `ROADMAP.md` | Fases F0–F6 + **trilha Classic C1–C9** |
 | `ARCHITECTURE.md`, `NETWORKING.md`, `SECURITY.md` | Propostas técnicas (🧪, não aprovadas) |
 | `IP_AND_LICENSES.md` | Direitos, termos da GPL da EA, inventários |
+| `classic-web/` | Scripts para jogar com um amigo via Tailscale (DEC-013) |
 | `unreal/RTSProto/` | Protótipo UE5 em C++ (**pausado**, nunca compilado) |
 
 ## Decisões em vigor (resumo)
@@ -33,6 +34,7 @@
 | DEC-010 | Versão UE5 para Windows, escrita do zero, com nome e conteúdo originais. **Adiada para a F6** |
 | DEC-011 | **Classic primeiro:** navegador + Windows com **crossplay**, foco em multiplayer, ranqueada e melhoria gráfica |
 | DEC-012 | Resoluções **1080p, 1440p (2K) e 2160p (4K)** |
+| DEC-013 | **Primeiro jogável:** build pronta do wasm-generals servida no PC do responsável e publicada só na tailnet (`classic-web/`) |
 
 ## O que a pesquisa descobriu
 
@@ -61,7 +63,8 @@
   - **Lolendor** (recomendação provisória): mais avançado, multiplayer em andamento. Falta confirmar que compila também para Windows a partir do mesmo código.
   - **TheodoryLabs** (alternativa): menos avançado, mas mais perto do TheSuperHackers no Windows, o que pode facilitar o crossplay.
 - [ ] **Fazer o fork no GitHub** com um nome **sem marcas da EA** e passar o nome do repositório. Depois, a IA usa `add_repo` para adicioná-lo à sessão. O motor fica num repositório próprio em GPL, separado do perfil.
-- [ ] **Ter o jogo comprado** para testar (a IA não pode usar arquivos do jogo).
+- [x] **Jogo:** o responsável está comprando a Ultimate Collection no EA app (2026-11-14).
+- [ ] **Testar o `classic-web/`** numa partida LAN real com o amigo e relatar o resultado.
 - [ ] Definir o **nome público** do projeto.
 
 ## Próximo passo técnico (C1)
