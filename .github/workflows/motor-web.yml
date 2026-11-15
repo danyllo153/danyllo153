@@ -41,8 +41,10 @@ jobs:
         include:
           - variant: compat
             jspi: "OFF"
+            triplet: wasm32-emscripten
           - variant: rapida
             jspi: "ON"
+            triplet: wasm32-emscripten-wasmeh
     steps:
       - name: Checkout deste repositorio
         uses: actions/checkout@v4
@@ -107,6 +109,7 @@ jobs:
           X="$GITHUB_WORKSPACE/extracted"
           cmake --preset webgpu \
             -DGENERALSX_WEB_JSPI=${{ matrix.jspi }} \
+            -DVCPKG_TARGET_TRIPLET=${{ matrix.triplet }} \
             -DGENERALSX_WEB_ASSET_DIR="$X/GeneralsZH" \
             "-DGENERALSX_WEB_PRELOAD_DIRS=Data/Cursors;Data/Scripts" \
             -DGENERALSX_WEB_FONT_FILE="$X/fonts/GeneralsX.ttf"

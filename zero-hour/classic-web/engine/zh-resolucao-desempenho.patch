@@ -107,10 +107,10 @@ index 7817c83..39c3fe8 100644
          # Tailwind app in web/, so emscripten must not generate (or own) any HTML.
          "-sMODULARIZE=1"
 diff --git a/cmake/webgpu.cmake b/cmake/webgpu.cmake
-index 49cc9c6..7136a3a 100644
+index 49cc9c6..af87964 100644
 --- a/cmake/webgpu.cmake
 +++ b/cmake/webgpu.cmake
-@@ -4,19 +4,28 @@ if(NOT EMSCRIPTEN)
+@@ -4,19 +4,29 @@ if(NOT EMSCRIPTEN)
  endif()
  
  # GeneralsX @build Codex 04/08/2026 Keep the browser runtime single-threaded until game work is explicitly moved to workers.
@@ -123,6 +123,7 @@ index 49cc9c6..7136a3a 100644
 +if(GENERALSX_WEB_JSPI)
 +    set(GENERALSX_WEB_EH_FLAG -fwasm-exceptions)
 +    add_compile_definitions(GENERALSX_WEB_JSPI)
++    add_compile_options(-sSUPPORT_LONGJMP=wasm)
 +else()
 +    set(GENERALSX_WEB_EH_FLAG -fexceptions)
 +endif()
@@ -144,7 +145,7 @@ index 49cc9c6..7136a3a 100644
      # GeneralsX @port Codex 04/08/2026 Match the native process stack required by legacy global-data initialization.
      "-sSTACK_SIZE=1048576"
      # GeneralsX @build Codex 05/08/2026 Fixed 2 GiB heap. Do NOT raise: growth detaches emdawnwebgpu heap views
-@@ -26,3 +35,10 @@ target_link_options(webgpu_runtime INTERFACE
+@@ -26,3 +36,10 @@ target_link_options(webgpu_runtime INTERFACE
      # GeneralsX @feature Codex 05/08/2026 IDBFS keeps the user data dir (Options.ini, saves) across page loads.
      "-lidbfs.js"
  )
@@ -155,3 +156,39 @@ index 49cc9c6..7136a3a 100644
 +else()
 +    target_link_options(webgpu_runtime INTERFACE "-sASYNCIFY=1")
 +endif()
+diff --git a/triplets/wasm32-emscripten-wasmeh.cmake b/triplets/wasm32-emscripten-wasmeh.cmake
+new file mode 100644
+index 0000000..ca6360c
+--- /dev/null
++++ b/triplets/wasm32-emscripten-wasmeh.cmake
+@@ -0,0 +1,30 @@
++set(VCPKG_ENV_PASSTHROUGH_UNTRACKED EMSCRIPTEN_ROOT EMSDK PATH)
++
++if(NOT DEFINED ENV{EMSCRIPTEN_ROOT})
++   find_path(EMSCRIPTEN_ROOT "emcc")
++else()
++   set(EMSCRIPTEN_ROOT "$ENV{EMSCRIPTEN_ROOT}")
++endif()
++
++if(NOT EMSCRIPTEN_ROOT)
++   if(NOT DEFINED ENV{EMSDK})
++      message(FATAL_ERROR "The emcc compiler not found in PATH")
++   endif()
++   set(EMSCRIPTEN_ROOT "$ENV{EMSDK}/upstream/emscripten")
++endif()
++
++if(NOT EXISTS "${EMSCRIPTEN_ROOT}/cmake/Modules/Platform/Emscripten.cmake")
++   message(FATAL_ERROR "Emscripten.cmake toolchain file not found")
++endif()
++
++set(VCPKG_TARGET_ARCHITECTURE wasm32)
++set(VCPKG_CRT_LINKAGE dynamic)
++set(VCPKG_LIBRARY_LINKAGE static)
++set(VCPKG_CMAKE_SYSTEM_NAME Emscripten)
++set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "${EMSCRIPTEN_ROOT}/cmake/Modules/Platform/Emscripten.cmake")
++
++# Zero Hour (danyllo153) 14/11/2026 For the GENERALSX_WEB_JSPI build: native wasm exceptions and
++# wasm setjmp/longjmp. Libraries built with the default (JS-emulated) setjmp leave emscripten_longjmp
++# undefined at link time once the engine links with -sSUPPORT_LONGJMP=wasm.
++set(VCPKG_C_FLAGS "-sSUPPORT_LONGJMP=wasm")
++set(VCPKG_CXX_FLAGS "-sSUPPORT_LONGJMP=wasm -fwasm-exceptions")
