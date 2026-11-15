@@ -165,6 +165,7 @@
   - Não é a base definitiva da trilha Classic (crossplay com Windows, ranqueada): essa escolha continua aberta no HANDOFF.
   - Página sob licença MIT-PoU: manter o crédito ao wasm-generals.
 - **Itens em aberto:** testar uma partida real entre dois PCs; build própria sem arquivos do jogo no `.data` para um site público.
+- **Atualização (2026-11-15):** o motor passou a ser **compilado por nós** (patch em `classic-web/engine/`, GitHub Actions, release `motor-web`): 2K/4K, versão rápida com JSPI e sem limite de 60 FPS. O `.data` continua o original, baixado do upstream.
 
 ---
 
