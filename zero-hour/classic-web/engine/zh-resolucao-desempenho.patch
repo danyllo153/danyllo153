@@ -93,6 +93,31 @@ index b08126c..00618c9 100644
  		return;
  	}
  
+diff --git a/GeneralsMD/Code/GameEngineDevice/Source/W3DDevice/GameClient/W3DDisplay.cpp b/GeneralsMD/Code/GameEngineDevice/Source/W3DDevice/GameClient/W3DDisplay.cpp
+index 0c89480..7a305f7 100644
+--- a/GeneralsMD/Code/GameEngineDevice/Source/W3DDevice/GameClient/W3DDisplay.cpp
++++ b/GeneralsMD/Code/GameEngineDevice/Source/W3DDevice/GameClient/W3DDisplay.cpp
+@@ -515,6 +515,20 @@ inline Bool isResolutionSupported(const ResolutionDescClass &res)
+ #ifdef SAGE_USE_SDL3
+ static bool SDL3_GetNativeDisplaySize(int& outW, int& outH, float& outDensity)
+ {
++#if defined(__EMSCRIPTEN__)
++	// Zero Hour (danyllo153) 15/11/2026 In the browser SDL reports the screen in CSS pixels, so a 2560x1440
++	// monitor at 125% Windows scaling shows up as 2048x1152 and the 1440p mode is filtered out. Use the
++	// physical size: CSS screen size times devicePixelRatio.
++	const double ratio = EM_ASM_DOUBLE({ return window.devicePixelRatio || 1; });
++	const int cssW = EM_ASM_INT({ return screen.width | 0; });
++	const int cssH = EM_ASM_INT({ return screen.height | 0; });
++	if (cssW > 0 && cssH > 0) {
++		outDensity = (float)ratio;
++		outW = (int)(cssW * ratio + 0.5);
++		outH = (int)(cssH * ratio + 0.5);
++		return true;
++	}
++#endif
+ 	extern SDL_Window* TheSDL3Window;
+ 	if (!TheSDL3Window) return false;
+ 	SDL_DisplayID displayId = SDL_GetDisplayForWindow(TheSDL3Window);
 diff --git a/GeneralsMD/Code/Main/CMakeLists.txt b/GeneralsMD/Code/Main/CMakeLists.txt
 index 7817c83..39c3fe8 100644
 --- a/GeneralsMD/Code/Main/CMakeLists.txt
