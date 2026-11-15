@@ -2,7 +2,18 @@
 # Fonte: origami-ltd/wasm-generals, num commit fixo, com verificacao SHA-256 de cada arquivo.
 # Nenhum arquivo .big do jogo e baixado: cada jogador escolhe a pasta da propria copia no navegador.
 #
-# Uso:  powershell -ExecutionPolicy Bypass -File .\instalar.ps1
+# Uso:  powershell -ExecutionPolicy Bypass -File .\instalar.ps1 [-Versao original|compat|rapida]
+#
+#   original : motor do wasm-generals como publicado (ate 1080p)
+#   compat   : nosso motor com 2K/4K, mesmo mecanismo do original
+#   rapida   : nosso motor com 2K/4K e JSPI + excecoes nativas (mais FPS; Chrome/Edge 137+)
+#
+# compat e rapida vem da release "motor-web" deste repositorio (GitHub Actions).
+
+param(
+    [ValidateSet("original", "compat", "rapida")]
+    [string]$Versao = "original"
+)
 
 $ErrorActionPreference = "Stop"
 $ProgressPreference = "SilentlyContinue"   # deixa o Invoke-WebRequest muito mais rapido
@@ -35,6 +46,33 @@ foreach ($f in $Files) {
         throw "Hash diferente em $($f.Src): esperado $($f.Sha), recebido $hash. Instalacao cancelada."
     }
 }
+
+# Troca o motor pela nossa build, se pedida. O .data continua o original (nossa build le o mesmo pacote).
+if ($Versao -ne "original") {
+    $Rel = "https://github.com/danyllo153/danyllo153/releases/download/motor-web"
+    $tmp = Join-Path $Dest "motor-$Versao"
+    New-Item -ItemType Directory -Force -Path $tmp | Out-Null
+    $sums = Join-Path $tmp "SHA256SUMS.txt"
+    Write-Host "Baixando motor '$Versao' da release motor-web ..."
+    Invoke-WebRequest -UseBasicParsing -Uri "$Rel/SHA256SUMS-$Versao.txt" -OutFile $sums
+    $expected = @{}
+    foreach ($line in Get-Content $sums) {
+        $parts = $line -split "\s+\*?", 2
+        if ($parts.Count -eq 2) { $expected[$parts[1].Trim()] = $parts[0].ToLower() }
+    }
+    foreach ($ext in @("js", "wasm")) {
+        $name = "GeneralsXZH-$Versao.$ext"
+        if (-not $expected.ContainsKey($name)) { throw "SHA256SUMS da release nao lista $name." }
+        $out = Join-Path $tmp $name
+        Invoke-WebRequest -UseBasicParsing -Uri "$Rel/$name" -OutFile $out
+        $hash = (Get-FileHash -Algorithm SHA256 $out).Hash.ToLower()
+        if ($hash -ne $expected[$name]) { throw "Hash diferente em $name. Instalacao cancelada." }
+        Copy-Item $out (Join-Path $Www "GeneralsXZH.$ext") -Force
+    }
+    Remove-Item $tmp -Recurse -Force
+    Write-Host "Motor '$Versao' instalado (com 2K/4K)."
+}
+Set-Content -Path (Join-Path $Dest "versao.txt") -Value $Versao
 
 # Remove o Google Analytics da pagina: o servidor e privado, nao ha motivo para avisar terceiros.
 $index = Join-Path $Www "index.html"

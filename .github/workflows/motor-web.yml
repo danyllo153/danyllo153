@@ -1,0 +1,158 @@
+# Compila o motor web do Zero Hour (classic-web) com as mudancas de zero-hour/classic-web/engine/
+# e publica GeneralsXZH.js + GeneralsXZH.wasm numa release "motor-web" (pre-release).
+#
+# Duas versoes:
+#   compat : Asyncify + excecoes em JS (como o original), com 2K/4K
+#   rapida : JSPI + excecoes nativas do WebAssembly, com 2K/4K
+#
+# O GeneralsXZH.data (que traz alguns arquivos do jogo) NAO e publicado: o .js gerado e ajustado para
+# ler o .data original, que o instalar.ps1 baixa do projeto upstream.
+name: Motor web
+
+on:
+  push:
+    branches: [claude/serene-newton-2z4se1]
+    paths:
+      - zero-hour/classic-web/engine/**
+      - .github/workflows/motor-web.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: motor-web
+  cancel-in-progress: true
+
+env:
+  UPSTREAM_REPO: https://github.com/origami-ltd/wasm-generals
+  UPSTREAM_COMMIT: 46382a383da270e16a60a28ecf342b569b998111
+  VCPKG_COMMIT: 533a5fda5c0646d1771345fb572e759283444d5f
+  EMSDK_VERSION: 6.0.2
+
+jobs:
+  build:
+    name: build (${{ matrix.variant }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 240
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - variant: compat
+            jspi: "OFF"
+          - variant: rapida
+            jspi: "ON"
+    steps:
+      - name: Checkout deste repositorio
+        uses: actions/checkout@v4
+        with:
+          path: zh
+
+      - name: Checkout do wasm-generals (commit fixo) e aplicar o patch
+        run: |
+          git init -q wasm-generals
+          git -C wasm-generals remote add origin "$UPSTREAM_REPO"
+          git -C wasm-generals fetch -q --depth 1 origin "$UPSTREAM_COMMIT"
+          git -C wasm-generals checkout -q FETCH_HEAD
+          git -C wasm-generals apply --whitespace=nowarn "$GITHUB_WORKSPACE/zh/zero-hour/classic-web/engine/zh-resolucao-desempenho.patch"
+          git -C wasm-generals status --short
+
+      - name: Ferramentas (ninja)
+        run: sudo apt-get update -q && sudo apt-get install -y -q ninja-build
+
+      - name: Cache do emsdk
+        uses: actions/cache@v4
+        with:
+          path: emsdk
+          key: emsdk-${{ env.EMSDK_VERSION }}
+
+      - name: Emscripten ${{ env.EMSDK_VERSION }}
+        run: |
+          [ -d emsdk/.git ] || git clone -q https://github.com/emscripten-core/emsdk.git
+          ./emsdk/emsdk install "$EMSDK_VERSION"
+          ./emsdk/emsdk activate "$EMSDK_VERSION"
+
+      - name: Cache dos pacotes do vcpkg
+        uses: actions/cache@v4
+        with:
+          path: vcpkg-cache
+          key: vcpkg-${{ env.VCPKG_COMMIT }}-${{ env.EMSDK_VERSION }}-${{ matrix.variant }}-${{ hashFiles('wasm-generals/vcpkg.json', 'wasm-generals/vcpkg-lock.json') }}
+          restore-keys: vcpkg-${{ env.VCPKG_COMMIT }}-${{ env.EMSDK_VERSION }}-${{ matrix.variant }}-
+
+      - name: vcpkg (baseline fixa)
+        run: |
+          git clone -q https://github.com/microsoft/vcpkg.git
+          git -C vcpkg checkout -q "$VCPKG_COMMIT"
+          ./vcpkg/bootstrap-vcpkg.sh -disableMetrics
+          mkdir -p vcpkg-cache
+
+      - name: Arquivos embutidos do pacote original (so para a compilacao)
+        run: |
+          base="https://raw.githubusercontent.com/origami-ltd/wasm-generals/$UPSTREAM_COMMIT/web/dist"
+          mkdir -p upstream extracted
+          curl -fsSL "$base/GeneralsXZH.js" -o upstream/GeneralsXZH.js
+          curl -fsSL "$base/GeneralsXZH.data" -o upstream/GeneralsXZH.data
+          echo "9ee11495751d506f8bff681f6f0673f041a57eb5c2d20f3d9a1c21892bbb3c33  upstream/GeneralsXZH.js" | sha256sum -c -
+          echo "28d65aef04112086d70f2ef34bd4787a520200a4e01e6ba9191e168684623051  upstream/GeneralsXZH.data" | sha256sum -c -
+          python3 -I zh/zero-hour/classic-web/engine/extract_data_package.py upstream/GeneralsXZH.js upstream/GeneralsXZH.data extracted
+
+      - name: Configurar (cmake --preset webgpu, JSPI=${{ matrix.jspi }})
+        working-directory: wasm-generals
+        run: |
+          source "$GITHUB_WORKSPACE/emsdk/emsdk_env.sh"
+          export EMSCRIPTEN_ROOT="$EMSDK/upstream/emscripten"
+          export VCPKG_ROOT="$GITHUB_WORKSPACE/vcpkg"
+          export VCPKG_BINARY_SOURCES="clear;files,$GITHUB_WORKSPACE/vcpkg-cache,readwrite"
+          X="$GITHUB_WORKSPACE/extracted"
+          cmake --preset webgpu \
+            -DGENERALSX_WEB_JSPI=${{ matrix.jspi }} \
+            -DGENERALSX_WEB_ASSET_DIR="$X/GeneralsZH" \
+            "-DGENERALSX_WEB_PRELOAD_DIRS=Data/Cursors;Data/Scripts" \
+            -DGENERALSX_WEB_FONT_FILE="$X/fonts/GeneralsX.ttf"
+
+      - name: Compilar (ninja z_generals)
+        working-directory: wasm-generals
+        run: |
+          source "$GITHUB_WORKSPACE/emsdk/emsdk_env.sh"
+          ninja -C build/webgpu z_generals
+
+      - name: Ajustar o .js para o .data original e empacotar
+        run: |
+          out="motor-${{ matrix.variant }}"
+          mkdir -p "$out"
+          built=wasm-generals/build/webgpu/GeneralsMD
+          ls -la "$built"/GeneralsXZH.*
+          python3 -I zh/zero-hour/classic-web/engine/match_data_package.py \
+            "$built/GeneralsXZH.js" upstream/GeneralsXZH.js "$out/GeneralsXZH-${{ matrix.variant }}.js"
+          cp "$built/GeneralsXZH.wasm" "$out/GeneralsXZH-${{ matrix.variant }}.wasm"
+          # o .js carrega o .wasm pelo nome padrao; o instalar.ps1 renomeia de volta ao instalar
+          (cd "$out" && sha256sum * > "SHA256SUMS-${{ matrix.variant }}.txt" && cat SHA256SUMS-*.txt)
+          test ! -e "$out/GeneralsXZH.data"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: motor-${{ matrix.variant }}
+          path: motor-${{ matrix.variant }}
+          if-no-files-found: error
+
+  publicar:
+    needs: build
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Release "motor-web"
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          ls -la dist
+          notes="Motor web do classic-web (2K/4K; versao rapida com JSPI). Build de ${GITHUB_SHA::7}. Codigo-fonte: origami-ltd/wasm-generals@${UPSTREAM_COMMIT::7} + zero-hour/classic-web/engine/zh-resolucao-desempenho.patch (GPL-3.0). Sem arquivos do jogo."
+          gh release delete motor-web --yes --cleanup-tag 2>/dev/null || true
+          gh release create motor-web dist/* --prerelease --target "$GITHUB_SHA" --title "Motor web (classic-web)" --notes "$notes"
