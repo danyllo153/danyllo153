@@ -39,6 +39,16 @@ powershell -ExecutionPolicy Bypass -File .\instalar.ps1
 
 Baixa ~20 MB para `%USERPROFILE%\ZeroHourWeb`, de um commit fixo do projeto [origami-ltd/wasm-generals](https://github.com/origami-ltd/wasm-generals), conferindo o SHA-256 de cada arquivo. Também remove o Google Analytics e os botões do topo (doação, wasm.ltd, GitHub), deixando só uma linha de crédito no rodapé, que as licenças exigem.
 
+### Versão do motor (opcional)
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\instalar.ps1 -Versao rapida   # 2K/4K + mais FPS (Chrome/Edge 137+)
+powershell -ExecutionPolicy Bypass -File .\instalar.ps1 -Versao compat   # 2K/4K, mesmo mecanismo do original
+powershell -ExecutionPolicy Bypass -File .\instalar.ps1                  # original (até 1080p)
+```
+
+As versões `rapida` e `compat` vêm da release `motor-web` deste repositório (ver [`engine/`](engine/README.md)). **Você e o amigo devem usar a mesma versão** — como o servidor é seu, isso já acontece.
+
 ## 3. Ligar o servidor (toda vez que forem jogar)
 
 ```powershell

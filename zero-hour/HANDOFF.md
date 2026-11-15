@@ -65,6 +65,7 @@
 - [ ] **Fazer o fork no GitHub** com um nome **sem marcas da EA** e passar o nome do repositório. Depois, a IA usa `add_repo` para adicioná-lo à sessão. O motor fica num repositório próprio em GPL, separado do perfil.
 - [x] **Jogo:** o responsável está comprando a Ultimate Collection no EA app (2026-11-14).
 - [ ] **Testar o `classic-web/`** numa partida LAN real com o amigo e relatar o resultado.
+- [ ] **Testar o motor `rapida`** (2K/4K + JSPI, release `motor-web`): FPS em partida longa e LAN sem dessincronizar.
 - [ ] Definir o **nome público** do projeto.
 
 ## Próximo passo técnico (C1)

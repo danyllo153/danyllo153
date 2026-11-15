@@ -1,4 +1,4 @@
-# Motor web modificado (em andamento)
+# Motor web modificado
 
 Mudanças sobre [origami-ltd/wasm-generals @ 46382a3](https://github.com/origami-ltd/wasm-generals/tree/46382a383da270e16a60a28ecf342b569b998111), código GPL-3.0:
 
@@ -11,3 +11,12 @@ Mudanças sobre [origami-ltd/wasm-generals @ 46382a3](https://github.com/origami
 Compilação: workflow [`.github/workflows/motor-web.yml`](../../../.github/workflows/motor-web.yml) (GitHub Actions). Ele gera as versões `compat` e `rapida` e publica `.js` + `.wasm` na release `motor-web`. Para instalar: `instalar.ps1 -Versao rapida` (ou `compat`).
 
 Aplicar: `git -C wasm-generals apply zh-resolucao-desempenho.patch`. Compilar a versão rápida: `cmake --preset webgpu -DGENERALSX_WEB_JSPI=ON`.
+
+## Estado (2026-11-15)
+
+| Versão | Compila | Abre no Chromium até pedir a pasta | Testado jogando |
+|---|---|---|---|
+| `compat` (15 MB) | ✅ | ✅ | ⏳ |
+| `rapida` (7,3 MB, JSPI) | ✅ | ✅ | ⏳ |
+
+O teste até a pasta do jogo foi feito em Chromium sem tela; partida real depende de quem tem o jogo.
