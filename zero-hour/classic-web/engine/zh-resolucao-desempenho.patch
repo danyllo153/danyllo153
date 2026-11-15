@@ -49,10 +49,10 @@ index b756b53..ac529b7 100644
  		return D3DERR_INVALIDCALL;
  	}
 diff --git a/GeneralsMD/Code/GameEngineDevice/Source/SDL3GameEngine.cpp b/GeneralsMD/Code/GameEngineDevice/Source/SDL3GameEngine.cpp
-index b08126c..00618c9 100644
+index b08126c..bf6ca10 100644
 --- a/GeneralsMD/Code/GameEngineDevice/Source/SDL3GameEngine.cpp
 +++ b/GeneralsMD/Code/GameEngineDevice/Source/SDL3GameEngine.cpp
-@@ -499,17 +499,46 @@ void SDL3GameEngine::update(void)
+@@ -499,17 +499,64 @@ void SDL3GameEngine::update(void)
  /**
   * From GameEngine: execute() - main game loop
   */
@@ -71,22 +71,40 @@ index b08126c..00618c9 100644
 +	// Zero Hour (danyllo153) 14/11/2026 With JSPI a frame may only suspend (emscripten_sleep) inside a
 +	// WebAssembly.promising export, and emscripten's main loop calls frames through the function table,
 +	// which is not promising. Drive frames from JS through the GeneralsXPump export instead (listed in
-+	// JSPI_EXPORTS) and await each one before scheduling the next, so frames never overlap. Same 16 ms
-+	// setTimeout pacing as the Asyncify build, for the same LAN reason given below.
++	// JSPI_EXPORTS); a frame is never started while the previous one is still running.
++	// Zero Hour (danyllo153) 15/11/2026 Pace with requestAnimationFrame (one frame per monitor refresh,
++	// not capped at ~60 like the 16 ms timer). rAF stops when the window is unfocused or occluded, which
++	// would freeze one LAN peer (reason for the timer in the Asyncify build below), so a 16 ms timer runs
++	// a frame whenever rAF has not delivered one for 50 ms. ?fpscap=1 restores the old 16 ms pacing.
 +	s_gxPumpEngine = this;
 +	EM_ASM({
 +		const pump = Module["_GeneralsXPump"];
-+		const loop = async () => {
-+			const start = performance.now();
++		const capped = new URLSearchParams(location.search).get("fpscap") === "1";
++		let running = false;
++		let last = performance.now();
++		const frame = async () => {
++			if (running || Module["__gxStopLoop"]) return;
++			running = true;
++			last = performance.now();
 +			try {
 +				await pump();
 +			} catch (error) {
 +				if (error !== "unwind") console.error("GeneralsXPump", error);
 +			}
-+			if (Module["__gxStopLoop"]) return;
-+			setTimeout(loop, Math.max(0, 16 - (performance.now() - start)));
++			running = false;
 +		};
-+		setTimeout(loop, 0);
++		if (!capped) {
++			const onAnimationFrame = () => {
++				if (Module["__gxStopLoop"]) return;
++				frame();
++				requestAnimationFrame(onAnimationFrame);
++			};
++			requestAnimationFrame(onAnimationFrame);
++		}
++		const timer = setInterval(() => {
++			if (Module["__gxStopLoop"]) { clearInterval(timer); return; }
++			if (capped || performance.now() - last >= 50) frame();
++		}, 16);
 +	});
 +	emscripten_exit_with_live_runtime();
 +#else
@@ -99,7 +117,7 @@ index b08126c..00618c9 100644
  #else
  	GameEngine::execute();
  	fprintf(stderr, "INFO: SDL3GameEngine::execute() - exited main loop\n");
-@@ -521,8 +550,6 @@ void SDL3GameEngine::execute(void)
+@@ -521,8 +568,6 @@ void SDL3GameEngine::execute(void)
  // loop and desyncs LAN peers. The page drives frames from a worker while hidden via this export.
  // The guard makes overlapping entry impossible: executeFrame can suspend in emscripten_sleep,
  // and a pump arriving during that suspension must be dropped, not run reentrantly.
@@ -108,7 +126,7 @@ index b08126c..00618c9 100644
  
  extern "C" EMSCRIPTEN_KEEPALIVE void GeneralsXPump(void)
  {
-@@ -540,7 +567,11 @@ void SDL3GameEngine::browserFrame(void* enginePointer)
+@@ -540,7 +585,11 @@ void SDL3GameEngine::browserFrame(void* enginePointer)
  	if (engine->getQuitting())
  	{
  		s_gxInFrame = FALSE;
