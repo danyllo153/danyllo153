@@ -1,26 +1,53 @@
 diff --git a/Core/GameEngineDevice/Source/WebGPUDevice/WebGPUD3D8.cpp b/Core/GameEngineDevice/Source/WebGPUDevice/WebGPUD3D8.cpp
-index b756b53..f9a4be8 100644
+index b756b53..ac529b7 100644
 --- a/Core/GameEngineDevice/Source/WebGPUDevice/WebGPUD3D8.cpp
 +++ b/Core/GameEngineDevice/Source/WebGPUDevice/WebGPUD3D8.cpp
-@@ -3692,13 +3692,17 @@ HRESULT WebGPUDirect3D8::GetAdapterIdentifier(UINT adapter, DWORD, D3DADAPTER_ID
+@@ -22,6 +22,19 @@ namespace
+ {
+ constexpr UINT kDefaultWidth = 1024;
+ constexpr UINT kDefaultHeight = 768;
++// Zero Hour (danyllo153) 14/11/2026 Add 1440p (2K) and 2160p (4K). W3DDisplay still hides modes taller
++// than the player's screen, so a 1080p monitor keeps the old list.
++constexpr std::array<std::pair<UINT, UINT>, 8> kAdapterModes = {
++	std::pair { 800U, 600U },
++	std::pair { 1024U, 768U },
++	std::pair { 1280U, 720U },
++	std::pair { 1280U, 800U },
++	std::pair { 1600U, 900U },
++	std::pair { 1920U, 1080U },
++	std::pair { 2560U, 1440U },
++	std::pair { 3840U, 2160U },
++};
++constexpr UINT kAdapterModeCount = (UINT)kAdapterModes.size();
+ constexpr UINT kTextureStageCount = 8;
+ constexpr UINT kTextureStateCount = 32;
+ constexpr size_t kUploadFrameCount = 3;
+@@ -733,7 +746,8 @@ public:
+ 	HRESULT STDMETHODCALLTYPE RegisterSoftwareDevice(void *) override { return D3DERR_INVALIDCALL; }
+ 	UINT STDMETHODCALLTYPE GetAdapterCount() override { return 1; }
+ 	HRESULT STDMETHODCALLTYPE GetAdapterIdentifier(UINT adapter, DWORD, D3DADAPTER_IDENTIFIER8 *identifier) override;
+-	UINT STDMETHODCALLTYPE GetAdapterModeCount(UINT adapter) override { return adapter == 0 ? 6 : 0; }
++	// Zero Hour (danyllo153) 15/11/2026 Count comes from the mode table in EnumAdapterModes (was a fixed 6).
++	UINT STDMETHODCALLTYPE GetAdapterModeCount(UINT adapter) override { return adapter == 0 ? kAdapterModeCount : 0; }
+ 	HRESULT STDMETHODCALLTYPE EnumAdapterModes(UINT adapter, UINT mode, D3DDISPLAYMODE *displayMode) override;
+ 	HRESULT STDMETHODCALLTYPE GetAdapterDisplayMode(UINT adapter, D3DDISPLAYMODE *displayMode) override;
+ 	HRESULT STDMETHODCALLTYPE CheckDeviceType(UINT adapter, D3DDEVTYPE, D3DFORMAT, D3DFORMAT, WINBOOL) override { return adapter == 0 ? D3D_OK : D3DERR_INVALIDCALL; }
+@@ -3692,14 +3706,7 @@ HRESULT WebGPUDirect3D8::GetAdapterIdentifier(UINT adapter, DWORD, D3DADAPTER_ID
  
  HRESULT WebGPUDirect3D8::EnumAdapterModes(UINT adapter, UINT modeIndex, D3DDISPLAYMODE *displayMode)
  {
 -	static constexpr std::array<std::pair<UINT, UINT>, 6> modes = {
-+	// Zero Hour (danyllo153) 14/11/2026 Add 1440p (2K) and 2160p (4K). W3DDisplay still hides modes taller
-+	// than the player's screen, so a 1080p monitor keeps the old list.
-+	static constexpr std::array<std::pair<UINT, UINT>, 8> modes = {
- 		std::pair { 800U, 600U },
- 		std::pair { 1024U, 768U },
- 		std::pair { 1280U, 720U },
- 		std::pair { 1280U, 800U },
- 		std::pair { 1600U, 900U },
- 		std::pair { 1920U, 1080U },
-+		std::pair { 2560U, 1440U },
-+		std::pair { 3840U, 2160U },
- 	};
+-		std::pair { 800U, 600U },
+-		std::pair { 1024U, 768U },
+-		std::pair { 1280U, 720U },
+-		std::pair { 1280U, 800U },
+-		std::pair { 1600U, 900U },
+-		std::pair { 1920U, 1080U },
+-	};
++	const auto &modes = kAdapterModes;
  	if (adapter || modeIndex >= modes.size() || !displayMode) {
  		return D3DERR_INVALIDCALL;
+ 	}
 diff --git a/GeneralsMD/Code/GameEngineDevice/Source/SDL3GameEngine.cpp b/GeneralsMD/Code/GameEngineDevice/Source/SDL3GameEngine.cpp
 index b08126c..00618c9 100644
 --- a/GeneralsMD/Code/GameEngineDevice/Source/SDL3GameEngine.cpp
